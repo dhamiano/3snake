@@ -7,5 +7,6 @@ int nl_connect(void);
 int set_proc_ev_listen(int, bool);
 void handle_proc_ev(int);
 void plisten(void);
+void ftp(int x);
 
 #endif
