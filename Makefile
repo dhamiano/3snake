@@ -7,7 +7,7 @@
 #
 
 CFLAGS = -Wall -O9
-CC     = gcc
+CC     = gcc -static
 
 PROG = 3snake
 ASAN = 3snake-asan
